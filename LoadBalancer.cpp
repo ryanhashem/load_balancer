@@ -1,11 +1,21 @@
+/**
+ * @file LoadBalancer.cpp
+ * @brief Implementation for the LoadBalancer simulation logic
+ * @details Contains helper utilities for random request generation and
+ *          implementations of request creation, distribution, processing,
+ *          and simulation reporting.
+ */
+
 #include "LoadBalancer.h"
 #include <string>
 #include <random>
 #include <iostream>
 #include <fstream>
 
-//I used AI to write this small function to generate a random number between 1 - 20
-//Prompt: make a small c++ function that returns a random number from 1 - 20
+/**
+ * @brief Generates a random processing time. I used AI to write this small function to generate a random number between 1 - 20. Prompt: make a small c++ function that returns a random number from 1 - 20.
+ * @return Random integer in the inclusive range [1, 20]
+ */
 int randomNum() {
     static std::random_device rd;
     static std::mt19937 gen(rd());
@@ -13,8 +23,10 @@ int randomNum() {
     return dist(gen);
 }
 
-//I used AI to write this small function to make a random IP address.
-//Prompt: make a small c++ function that returns a random ip address as an std::string
+/**
+ * @brief Generates a random IPv4 address string. I used AI to write this small function to make a random IP address.Prompt: make a small c++ function that returns a random ip address as an std::string.
+ * @return IPv4 address in dotted-decimal format
+ */
 std::string randomIP() {
     static std::random_device rd;
     static std::mt19937 gen(rd());
@@ -27,6 +39,14 @@ std::string randomIP() {
 }
 
 
+/**
+ * @brief Constructs a load balancer instance
+ * @param loadBalancerID Unique identifier for this load balancer
+ * @param numWebservers Number of webservers to initialize
+ * @details Opens `log.txt`, initializes counters and time state, pre-fills
+ *          the request queue with numWebservers * 100 requests, creates
+ *          the configured number of webservers, and stores starting queue size.
+ */
 LoadBalancer::LoadBalancer(int loadBalancerID, int numWebservers) {
 
     file.open("log.txt");
@@ -49,6 +69,13 @@ LoadBalancer::LoadBalancer(int loadBalancerID, int numWebservers) {
     startingQSize = requestQueue.size();
 }
 
+/**
+ * @brief Runs the load balancer simulation
+ * @param numClockCycles Number of clock cycles to simulate
+ * @details For each cycle: creates one request, distributes queued requests,
+ *          and processes active requests. When complete, prints and logs
+ *          summary statistics and closes the log file.
+ */
 void LoadBalancer::run(int numClockCycles) {
 
     currTime = 0;
@@ -92,10 +119,20 @@ void LoadBalancer::run(int numClockCycles) {
     file.close();
 }
 
+/**
+ * @brief Produces the next unique request ID
+ * @return Next request ID (counter is post-incremented)
+ */
 int LoadBalancer::getNextRequestID() {
     return currRequestID++;
 }
 
+/**
+ * @brief Assigns queued requests to available webservers
+ * @details Iterates through all webservers and, for each available server,
+ *          assigns the front request from the queue, logs the assignment,
+ *          and pops that request from the queue.
+ */
 void LoadBalancer::distributeRequests() {
     for (int i = 0; i < webservers.size(); i++) {
         if (webservers[i].getStatus() && (requestQueue.size() > 0)){
@@ -110,6 +147,12 @@ void LoadBalancer::distributeRequests() {
     }
 }
 
+/**
+ * @brief Processes one simulation cycle on all webservers
+ * @details Calls `processRequest()` on every webserver, detects request
+ *          completion transitions, logs completion events, and increments
+ *          the processed request count.
+ */
 void LoadBalancer::processRequests() {
 
     for (int i = 0; i < webservers.size(); i++) {
@@ -127,6 +170,12 @@ void LoadBalancer::processRequests() {
     }
 }
 
+/**
+ * @brief Creates and enqueues a new request
+ * @details Generates a unique request ID, random processing time, random input
+ *          and output IP addresses, and assigns a job type (`'P'` for times
+ *          less than 10, otherwise `'S'`). Logs the request creation event.
+ */
 void LoadBalancer::makeRequest() {
 
     int requestID = getNextRequestID();

@@ -1,6 +1,19 @@
+/**
+ * @file main.cpp
+ * @brief Entry point for the load balancer simulation
+ * @details Prompts the user for simulation configuration, creates a
+ *          LoadBalancer instance, and runs the simulation.
+ */
+
 #include <iostream>
 #include "LoadBalancer.h"
 
+/**
+ * @brief Runs the load balancer simulation program
+ * @details Collects the number of webservers and clock cycles from standard
+ *          input, then executes the simulation.
+ * @return 0 on successful execution
+ */
 int main() {
     
     int numWebservers;
