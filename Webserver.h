@@ -5,9 +5,15 @@
 
 class Webserver {
     private:
-        int webserverID;
+        int webserverID; 
         Request request;
-        bool requestProcessed;
+
+    public:
+        Webserver(int webserverID);
+        int getID();
+        void newRequest(Request request);
+        void processRequest();
+        bool getStatus();
 };
 
 

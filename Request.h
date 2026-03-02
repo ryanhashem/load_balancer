@@ -4,12 +4,15 @@
 #include <string>
 
 struct Request {
-    private:
-        int requestID;
-        std::string ipIn;
+    public:
+        int requestID; 
+        std::string ipIn; 
         std::string ipOut;
         int time;
-        char jobType;
+        int timeLeft; 
+        char jobType; 
+        Request();
+        Request(int requestID, std::string ipIn, std::string ipOut, int time, char jobType);
 };
 
 #endif
