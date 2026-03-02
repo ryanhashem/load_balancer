@@ -45,6 +45,8 @@ LoadBalancer::LoadBalancer(int loadBalancerID, int numWebservers) {
     for (int i = 0; i < numWebservers; i++) {
         webservers.push_back(Webserver(i));
     }   
+
+    startingQSize = requestQueue.size();
 }
 
 void LoadBalancer::run(int numClockCycles) {
@@ -58,9 +60,34 @@ void LoadBalancer::run(int numClockCycles) {
         currTime++;
     }
 
-    std::cout << "Simulation is done. Number of requests processed: " << numRequestsProcessed << std::endl;
+    int activeWebservers = 0;
+    int inactiveWebservers = 0;
 
-    file << "Simulation is done. Number of requests processed: " << numRequestsProcessed << std::endl;
+
+    for (int i = 0; i < webservers.size(); i++) {
+
+        if (webservers[i].getStatus()) {
+            inactiveWebservers++;
+        } else {
+            activeWebservers++;
+        }
+    }
+
+    std::cout << "Simulation is done." << std::endl;
+    std::cout << "Number of requests processed: " << numRequestsProcessed << std::endl;
+    std::cout << "Starting queue size: " << startingQSize << std::endl;
+    std::cout << "Ending queue size: " << requestQueue.size() << std::endl;
+    std::cout << "Range for task times: 1 - 20 clock cycles" << std::endl;
+    std::cout << "Active webservers: " << activeWebservers << std::endl;
+    std::cout << "Inactive webservers: " << inactiveWebservers << std::endl;
+
+    file << "Simulation is done." << std::endl;
+    file << "Number of requests processed: " << numRequestsProcessed << std::endl;
+    file << "Starting queue size: " << startingQSize << std::endl;
+    file << "Ending queue size: " << requestQueue.size() << std::endl;
+    file << "Range for task times: 1 - 20 clock cycles" << std::endl;
+    file << "Active webservers: " << activeWebservers << std::endl;
+    file << "Inactive webservers: " << inactiveWebservers << std::endl;
 
     file.close();
 }

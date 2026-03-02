@@ -17,6 +17,7 @@ class LoadBalancer {
         int currRequestID;
         std::ofstream file;
         int numRequestsProcessed;
+        int startingQSize;
 
         void makeRequest();
         void distributeRequests();
