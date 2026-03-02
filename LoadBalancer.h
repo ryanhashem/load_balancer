@@ -5,6 +5,8 @@
 #include "Request.h"
 #include <vector>
 #include "Webserver.h"
+#include <fstream>
+
 
 class LoadBalancer {
     private:
@@ -13,6 +15,8 @@ class LoadBalancer {
         std::vector<Webserver> webservers;
         int currTime;
         int currRequestID;
+        std::ofstream file;
+        int numRequestsProcessed;
 
         void makeRequest();
         void distributeRequests();

@@ -1,6 +1,8 @@
 #include "LoadBalancer.h"
 #include <string>
 #include <random>
+#include <iostream>
+#include <fstream>
 
 //I used AI to write this small function to generate a random number between 1 - 20
 //Prompt: make a small c++ function that returns a random number from 1 - 20
@@ -27,6 +29,10 @@ std::string randomIP() {
 
 LoadBalancer::LoadBalancer(int loadBalancerID, int numWebservers) {
 
+    file.open("log.txt");
+
+    numRequestsProcessed = 0;
+
     this->loadBalancerID = loadBalancerID;
     currTime = 0;
 
@@ -51,6 +57,12 @@ void LoadBalancer::run(int numClockCycles) {
         processRequests();
         currTime++;
     }
+
+    std::cout << "Simulation is done. Number of requests processed: " << numRequestsProcessed << std::endl;
+
+    file << "Simulation is done. Number of requests processed: " << numRequestsProcessed << std::endl;
+
+    file.close();
 }
 
 int LoadBalancer::getNextRequestID() {
@@ -63,14 +75,28 @@ void LoadBalancer::distributeRequests() {
 
             webservers[i].newRequest(requestQueue.front());
 
+            file << "Time: " << currTime << ", request " << requestQueue.front().requestID << " is now being processed on webserver " << webservers[i].getID() << std::endl;
+
             requestQueue.pop();
+
         }
     }
 }
 
 void LoadBalancer::processRequests() {
+
     for (int i = 0; i < webservers.size(); i++) {
+
+        bool hadRequest = !webservers[i].getStatus();
+
         webservers[i].processRequest();
+
+        if (hadRequest && webservers[i].getStatus()) {
+
+            file << "Time: " << currTime << ", webserver "<< webservers[i].getID() << " finished processing its request" << std::endl;
+
+            numRequestsProcessed++;
+        }
     }
 }
 
@@ -93,5 +119,7 @@ void LoadBalancer::makeRequest() {
     Request request(requestID, ipIn, ipOut, time, jobType);
 
     requestQueue.push(request);
+
+    file << "Time: " << currTime << ", request " << requestID << " created" << std::endl;
 
 }

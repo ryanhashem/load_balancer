@@ -16,6 +16,5 @@ int main() {
     LoadBalancer loadBalancer(1, numWebservers);
     loadBalancer.run(numClockCycles);
 
-    std::cout << "done" << std::endl;
     return 0;
 }
